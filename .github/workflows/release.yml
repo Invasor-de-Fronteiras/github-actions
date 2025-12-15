@@ -1,0 +1,7 @@
+name: Release Github Action's Version's
+on:
+  push: {}
+
+jobs:
+  release:
+    uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release-github-action.yml@main
