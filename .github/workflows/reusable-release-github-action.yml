@@ -2,9 +2,6 @@ name: Release Github Action
 on:
   workflow_call: {}
 
-permissions:
-  contents: read
-
 jobs:
   release:
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
