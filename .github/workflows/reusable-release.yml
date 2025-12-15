@@ -23,4 +23,11 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: |
+          npx \
+            --package semantic-release \
+            --package @semantic-release/commit-analyzer \
+            --package @semantic-release/changelog \
+            --package conventional-changelog-conventionalcommits \
+            --package @semantic-release/github \
+            semantic-release
