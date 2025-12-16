@@ -13,7 +13,11 @@ jobs:
 
       - id: set-matrix
         run: |
-          files=$(ls .github/workflows/reusable-*.yml | sed 's#.github/workflows/##')
+          files=$( \
+            ls .github/workflows/reusable-*.yml \
+            | sed 's#.github/workflows/##' \
+            | sed 's/\.yml$//' \
+            )
           json=$(printf '%s\n' $files | jq -R . | jq -cs '{ workflow: . }')
 
           echo "matrix=$json" >> $GITHUB_OUTPUT
