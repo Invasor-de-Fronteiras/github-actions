@@ -57,6 +57,9 @@ jobs:
           fi
 
           echo '$RELEASE_CONFIG_CONTENT' > .releaserc
+
+          cat "Created .releaserc with content:"
+          cat .releaserc
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
