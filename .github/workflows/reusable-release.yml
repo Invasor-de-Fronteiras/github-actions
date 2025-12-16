@@ -20,6 +20,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
+          cache: "npm"
+      - name: Create .releaserc
+        run: |
+          echo '{
+            "branches": [
+              "main",
+              "next",
+              "beta"
+            ],
+            "plugins": [
+              "@semantic-release/commit-analyzer",
+              "@semantic-release/changelog",
+              "@semantic-release/github"
+            ]
+          }' > .releaserc
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -30,4 +45,4 @@ jobs:
             --package @semantic-release/changelog \
             --package conventional-changelog-conventionalcommits \
             --package @semantic-release/github \
-            semantic-release
+            semantic-release --plugins \
