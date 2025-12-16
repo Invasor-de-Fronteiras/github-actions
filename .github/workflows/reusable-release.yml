@@ -58,7 +58,7 @@ jobs:
 
           echo '$RELEASE_CONFIG_CONTENT' > .releaserc
 
-          cat "Created .releaserc with content:"
+          echo "Created .releaserc with content:\n"
           cat .releaserc
       - name: Release
         env:
