@@ -17,12 +17,16 @@ jobs:
 
           git fetch --no-tags --prune --depth=2 origin
 
-          files=$(  \
-            git diff --name-only HEAD~1 HEAD \
-            | grep '^.github/workflows/reusable-.*\.yml$' || true \
-            | sed 's#.github/workflows/##' \
-            | sed 's/\.yml$//' \
-          )
+          diff_files=$(git diff --name-only HEAD~1 HEAD)
+          workflow_files=$(echo "$diff_files" | grep '^.github/workflows/reusable-.*\.yml$' || true)
+          normalized_files=$(echo "$workflow_files" | sed 's#.github/workflows/##' | sed 's/\.yml$//')
+          
+          files=$(echo "$normalized_files" | tr '\n' ' ' | xargs)
+
+          echo "diff_files: $diff_files"
+          echo "workflow_files: $workflow_files"
+          echo "normalized_files: $normalized_files"
+
 
           if [ -z "$files" ]; then
             echo "No reusable workflows changed"
