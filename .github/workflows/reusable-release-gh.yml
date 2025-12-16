@@ -23,6 +23,27 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
+    with:
+      release-config-content: |
+        {
+          "branches": [
+            "main",
+            "next",
+            "beta"
+          ],
+          "tagFormat": "{{ matrix.workflow }}-v${version}",
+          "plugins": [
+            [
+              "@semantic-release/commit-analyzer",
+              {
+                "preset": "conventionalcommits"
+              }
+            ],
+            "@semantic-release/changelog",
+            "@semantic-release/git"
+          ],
+
+        }
     permissions:
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
