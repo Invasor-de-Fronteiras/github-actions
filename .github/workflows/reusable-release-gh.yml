@@ -26,6 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+    name: Release ${{ matrix.workflow }}
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
     with:
       release-config-content: |
