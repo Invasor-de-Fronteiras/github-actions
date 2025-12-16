@@ -1,6 +1,8 @@
 name: Release Github Action's Version's
 on:
-  push: {}
+  push:
+    branches:
+      - main
 
 jobs:
   release:
