@@ -67,7 +67,7 @@ jobs:
             [
               "@semantic-release/changelog",
               {
-                "changelogFile": "docs/workflows/CHANGELOG-${{ matrix.workflow }}.md"
+                "changelogFile": "docs/workflows/${{ matrix.workflow }}.CHANGELOG.md"
               }
             ],
             [
@@ -80,7 +80,7 @@ jobs:
               "@semantic-release/git",
               {
                 "assets": [
-                  "docs/workflows/CHANGELOG-${{ matrix.workflow }}.md"
+                  "docs/workflows/${{ matrix.workflow }}.CHANGELOG.md"
                 ],
                 "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
               }
