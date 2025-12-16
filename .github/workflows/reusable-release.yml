@@ -5,7 +5,14 @@ on:
       packages:
         required: false
         type: string
-        default: "semantic-release-major-tag,@semantic-release/commit-analyzer,@semantic-release/changelog,@semantic-release/git,@semantic-release/github,conventional-changelog-conventionalcommits"
+        default: |
+          semantic-release-major-tag
+          @semantic-release/release-notes-generator
+          @semantic-release/commit-analyzer
+          @semantic-release/changelog
+          @semantic-release/git
+          @semantic-release/github
+          conventional-changelog-conventionalcommits
       create-release-config:
         required: false
         type: boolean
@@ -22,6 +29,7 @@ on:
             ],
             "plugins": [
               "@semantic-release/commit-analyzer",
+              "@semantic-release/release-notes-generator",
               "@semantic-release/changelog",
               "@semantic-release/git"
             ]
@@ -67,8 +75,11 @@ jobs:
         run: |
           set -e
           
+          NORMALIZED_PKGS=$(echo $PACKAGES | tr '\n' ',' | sed 's/,$//')
+          echo "Normalized packages: $NORMALIZED_PKGS"
+
           EXTRA_PACKAGES=""
-          IFS=',' read -ra PKGS <<< "$PACKAGES"
+          read -ra PKGS <<< "$NORMALIZED_PKGS"
           for pkg in "${PKGS[@]}"; do
             EXTRA_PACKAGES="$EXTRA_PACKAGES --package $pkg"
           done
