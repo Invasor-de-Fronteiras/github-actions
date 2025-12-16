@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-gh-v1.0.0...reusable-release-gh-v1.1.0) (2025-12-16)
+
+
+### Features
+
+* **release-gh:** create release in doc changes ([ec0582b](https://github.com/Invasor-de-Fronteiras/github-actions/commit/ec0582b215bac98ab918c7d0a42ad52f9b1f2976))
+
 # 1.0.0 (2025-12-16)
 
 
