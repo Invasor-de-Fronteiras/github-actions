@@ -50,7 +50,12 @@ jobs:
               }
             ],
             "@semantic-release/release-notes-generator",
-            "@semantic-release/changelog",
+            [
+              "@semantic-release/changelog",
+              {
+                "changelogFile": "CHANGELOG-${{ matrix.workflow }}.md"
+              }
+            ],
             [
               "@semantic-release/git",
               {
