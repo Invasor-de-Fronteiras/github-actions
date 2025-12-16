@@ -5,7 +5,7 @@ on:
       packages:
         required: false
         type: string
-        default: "@semantic-release/commit-analyzer,@semantic-release/changelog,@semantic-release/github,conventional-changelog-conventionalcommits"
+        default: "@semantic-release/commit-analyzer,@semantic-release/changelog,@semantic-release/git,@semantic-release/github,conventional-changelog-conventionalcommits"
       create-release-config:
         required: false
         type: boolean
@@ -47,7 +47,7 @@ jobs:
             "plugins": [
               "@semantic-release/commit-analyzer",
               "@semantic-release/changelog",
-              "@semantic-release/github"
+              "@semantic-release/git"
             ]
           }' > .releaserc
       - name: Release
