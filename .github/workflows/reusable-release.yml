@@ -62,4 +62,6 @@ jobs:
             EXTRA_PACKAGES="$EXTRA_PACKAGES --package $pkg"
           done
 
+          echo "Using packages: $EXTRA_PACKAGES"
+
           npx --package semantic-release $EXTRA_PACKAGES semantic-release
