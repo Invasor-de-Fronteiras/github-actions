@@ -1,0 +1,140 @@
+name: Commit App
+
+on:
+  workflow_call:
+    inputs:
+      repository:
+        description: 'The repository to commit the App to'
+        required: true
+        type: string
+      app-content:
+        description: 'The content of the App to commit'
+        required: true
+        type: string
+      app-path:
+        description: 'The path in the repository to commit the App to'
+        required: true
+        type: string
+      app-file-merge-strategy:
+        description: 'The merge strategy to use when committing the App file'
+        required: false
+        type: string
+        default: 'replace' # other options: replace, overwrite
+      app-file-extension:
+        description: 'The file extension to use for the App file'
+        required: false
+        type: string
+        default: 'yml' # other options: json, yaml
+      create-if-missing:
+        description: 'Whether to create the file if it is missing'
+        required: false
+        type: boolean
+        default: true
+      branch:
+        description: 'The branch to commit the App to'
+        required: false
+        type: string
+        default: 'main'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v6
+        with:
+          path: source-repo
+      - name: Checkout target repository
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ inputs.repository }}
+          path: target-repo
+      
+      - name: Create File Path
+        run: |
+          mkdir -p "target-repo/${{ inputs.app-path }}"
+
+      - name: Install require tools
+        run: |
+          sudo apt-get update
+
+          if [[ "${{ inputs.app-file-extension }}" == "json" ]]; then
+            sudo apt-get install -y jq
+            exit 0
+          fi
+
+          if [[ "${{ inputs.app-file-extension }}" == "yml" || "${{ inputs.app-file-extension }}" == "yaml" ]]; then
+            sudo apt-get install -y python3-pip
+            pip3 install yq
+            exit 0
+          fi
+
+          echo "Unsupported file extension: ${{ inputs.app-file-extension }}"
+          exit 1
+
+      - name: Prepare App File Content
+        id: prepare-app
+        run: |
+          set -e
+          FILE_PATH="target-repo/${{ inputs.app-path }}/app.${{ inputs.app-file-extension }}"
+          CONTENT='${{ inputs.app-content }}'
+          MERGE_STRATEGY="${{ inputs.app-file-merge-strategy }}"
+          CREATE_IF_MISSING=${{ inputs.create-if-missing }}
+          echo "FILE_PATH=$FILE_PATH"
+
+          if [[ ! -f "$FILE_PATH" ]]; then
+            if [ "$CREATE_IF_MISSING" = true ] ; then
+              echo "File does not exist. Creating new file."
+              echo "$CONTENT" > "$FILE_PATH"
+              exit 0
+            else
+              echo "File does not exist and create-if-missing is false. Exiting."
+              exit 1
+            fi
+          fi
+
+          if [[ "$MERGE_STRATEGY" == "overwrite" ]]; then
+            echo "Overwriting file content."
+            echo "$CONTENT" > "$FILE_PATH"
+            exit 0
+          fi
+
+          if [[ "$MERGE_STRATEGY" == "replace" ]]; then
+            echo "Replacing file content."
+            if [[ "${{ inputs.app-file-extension }}" == "json" ]]; then
+              jq -s '.[0] * .[1]' "$FILE_PATH" <(echo "$CONTENT") > "${FILE_PATH}.tmp" && mv "${FILE_PATH}.tmp" "$FILE_PATH"
+              exit 0
+            fi
+
+            if [[ "${{ inputs.app-file-extension }}" == "yml" || "${{ inputs.app-file-extension }}" == "yaml" ]]; then
+              yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' "$FILE_PATH" <(echo "$CONTENT") > "${FILE_PATH}.tmp" && mv "${FILE_PATH}.tmp" "$FILE_PATH"
+              exit 0
+            fi
+
+            echo "Unsupported file extension for replace strategy: ${{ inputs.app-file-extension }}"
+            exit 1
+          fi
+
+      - name: Commit and Push Changes
+        run: |
+          set -e
+          cd target-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Update App file at ${{ inputs.app-path }}/app.${{ inputs.app-file-extension }}"
+          git push origin HEAD:${{ inputs.branch }}
