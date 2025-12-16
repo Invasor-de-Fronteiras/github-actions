@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-gh-v1.2.0...reusable-release-gh-v1.3.0) (2025-12-16)
+
+
+### Features
+
+* **docker-build:** create reusable-docker-build ([ca266de](https://github.com/Invasor-de-Fronteiras/github-actions/commit/ca266de08e7918937975e8a04e2ee995609231e0))
+* **release-gh:** add workflow name in commit description ([299ce21](https://github.com/Invasor-de-Fronteiras/github-actions/commit/299ce21f8c0578174bf60cb1ddcbfa631c951847))
+
 # [1.2.0](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-gh-v1.1.0...reusable-release-gh-v1.2.0) (2025-12-16)
 
 
