@@ -43,14 +43,13 @@ jobs:
                 "preset": "conventionalcommits",
               }
             ],
-            "@semantic-release/release-notes-generator",
-            "@semantic-release/changelog",
             [
               "semantic-release-major-tag",
               {
                 "customTags": ["${{ matrix.workflow }}-v${major}"]
               }
             ],
+            "@semantic-release/release-notes-generator",
             "@semantic-release/changelog",
             [
               "@semantic-release/git",
