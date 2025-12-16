@@ -1,6 +1,14 @@
 name: Release Tag
 on:
-  workflow_call: {}
+  workflow_call:
+    packages:
+      required: false
+      type: string
+      default: "@semantic-release/commit-analyzer,@semantic-release/changelog,@semantic-release/github,conventional-changelog-conventionalcommits"
+    create-release-config:
+      required: false
+      type: boolean
+      default: true
 
 jobs:
   release:
@@ -22,7 +30,14 @@ jobs:
           node-version: "lts/*"
           cache: "npm"
       - name: Create .releaserc
+        if: ${{ inputs.create-release-config }}
         run: |
+          if [ -f .releaserc ]; then
+            echo ".releaserc already exists"
+            cat .releaserc
+            exit 0
+          fi
+
           echo '{
             "branches": [
               "main",
@@ -39,10 +54,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npx \
-            --package semantic-release \
-            --package @semantic-release/commit-analyzer \
-            --package @semantic-release/changelog \
-            --package conventional-changelog-conventionalcommits \
-            --package @semantic-release/github \
-            semantic-release --plugins \
+          set -e
+          
+          EXTRA_PACKAGES=""
+          IFS=',' read -ra PKGS <<< "$PACKAGES"
+          for pkg in "${PKGS[@]}"; do
+            EXTRA_PACKAGES="$EXTRA_PACKAGES --package $pkg"
+          done
+          
+          npx --package semantic-release $EXTRA_PACKAGES semantic-release
