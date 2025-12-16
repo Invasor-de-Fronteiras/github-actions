@@ -13,14 +13,25 @@ jobs:
 
       - id: set-matrix
         run: |
-          files=$( \
-            ls .github/workflows/reusable-*.yml \
+          set -e
+
+          git fetch --no-tags --prune --depth=2 origin
+
+          files=$(git diff --name-only HEAD~1 HEAD \
+            | grep '^.github/workflows/reusable-.*\.yml$' || true \
             | sed 's#.github/workflows/##' \
             | sed 's/\.yml$//' \
-            )
+          )
+
+          if [ -z "$files" ]; then
+            echo "No reusable workflows changed"
+            echo 'matrix={"workflow":[]}' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           json=$(printf '%s\n' $files | jq -R . | jq -cs '{ workflow: . }')
 
-          echo "matrix=$json" >> $GITHUB_OUTPUT
+          echo "matrix=$json" >> "$GITHUB_OUTPUT"
   release:
     needs: discover
     strategy:
