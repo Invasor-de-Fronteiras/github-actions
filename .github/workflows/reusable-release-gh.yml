@@ -43,24 +43,24 @@ jobs:
                 "preset": "conventionalcommits",
               }
             ],
+            "@semantic-release/release-notes-generator",
+            [
+              "@semantic-release/changelog",
+              {
+                "changelogFile": "docs/workflows/CHANGELOG-${{ matrix.workflow }}.md"
+              }
+            ],
             [
               "semantic-release-major-tag",
               {
                 "customTags": ["${{ matrix.workflow }}-v${major}"]
               }
             ],
-            "@semantic-release/release-notes-generator",
-            [
-              "@semantic-release/changelog",
-              {
-                "changelogFile": "CHANGELOG-${{ matrix.workflow }}.md"
-              }
-            ],
             [
               "@semantic-release/git",
               {
                 "assets": [
-                  "CHANGELOG.md"
+                  "docs/workflows/CHANGELOG-${{ matrix.workflow }}.md"
                 ],
                 "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
               }
