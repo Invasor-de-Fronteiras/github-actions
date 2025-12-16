@@ -1,14 +1,15 @@
 name: Release Tag
 on:
   workflow_call:
-    packages:
-      required: false
-      type: string
-      default: "@semantic-release/commit-analyzer,@semantic-release/changelog,@semantic-release/github,conventional-changelog-conventionalcommits"
-    create-release-config:
-      required: false
-      type: boolean
-      default: true
+    inputs:
+      packages:
+        required: false
+        type: string
+        default: "@semantic-release/commit-analyzer,@semantic-release/changelog,@semantic-release/github,conventional-changelog-conventionalcommits"
+      create-release-config:
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   release:
@@ -61,5 +62,5 @@ jobs:
           for pkg in "${PKGS[@]}"; do
             EXTRA_PACKAGES="$EXTRA_PACKAGES --package $pkg"
           done
-          
+
           npx --package semantic-release $EXTRA_PACKAGES semantic-release
