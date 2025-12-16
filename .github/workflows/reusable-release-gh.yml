@@ -40,9 +40,10 @@ jobs:
             [
               "@semantic-release/commit-analyzer",
               {
-                "preset": "conventionalcommits"
+                "preset": "conventionalcommits",
               }
             ],
+            "semantic-release-major-tag",
             "@semantic-release/changelog",
             "@semantic-release/git"
           ],

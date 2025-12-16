@@ -5,7 +5,7 @@ on:
       packages:
         required: false
         type: string
-        default: "@semantic-release/commit-analyzer,@semantic-release/changelog,@semantic-release/git,@semantic-release/github,conventional-changelog-conventionalcommits"
+        default: "semantic-release-major-tag,@semantic-release/commit-analyzer,@semantic-release/changelog,@semantic-release/git,@semantic-release/github,conventional-changelog-conventionalcommits"
       create-release-config:
         required: false
         type: boolean
