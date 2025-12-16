@@ -10,6 +10,22 @@ on:
         required: false
         type: boolean
         default: true
+      release-config-content:
+        required: false
+        type: string
+        default: |
+          {
+            "branches": [
+              "main",
+              "next",
+              "beta"
+            ],
+            "plugins": [
+              "@semantic-release/commit-analyzer",
+              "@semantic-release/changelog",
+              "@semantic-release/git",
+            ]
+          }
 
 jobs:
   release:
@@ -31,6 +47,8 @@ jobs:
           node-version: "lts/*"
       - name: Create .releaserc
         if: ${{ inputs.create-release-config }}
+        env:
+          RELEASE_CONFIG_CONTENT: ${{ inputs.release-config-content }}
         run: |
           if [ -f .releaserc ]; then
             echo ".releaserc already exists"
@@ -38,18 +56,7 @@ jobs:
             exit 0
           fi
 
-          echo '{
-            "branches": [
-              "main",
-              "next",
-              "beta"
-            ],
-            "plugins": [
-              "@semantic-release/commit-analyzer",
-              "@semantic-release/changelog",
-              "@semantic-release/git"
-            ]
-          }' > .releaserc
+          echo '$RELEASE_CONFIG_CONTENT' > .releaserc
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
