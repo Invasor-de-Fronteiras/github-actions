@@ -1,0 +1,31 @@
+name: Release Github Action
+on:
+  workflow_call: {}
+
+jobs:
+  discover:
+    name: Discover reusable workflows
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: set-matrix
+        run: |
+          files=$(ls .github/workflows/reusable-*.yml | sed 's#.github/workflows/##')
+          json=$(printf '%s\n' $files | jq -R . | jq -cs '{ workflow: . }')
+
+          echo "matrix=$json" >> $GITHUB_OUTPUT
+  release:
+    needs: discover
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+    uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for trusted publishing and npm provenance
+    secrets: inherit
