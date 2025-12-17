@@ -106,6 +106,7 @@ jobs:
             if [[ "${{ inputs.app-file-extension }}" == "yml" || "${{ inputs.app-file-extension }}" == "yaml" ]]; then
               
               TMP_FILE_PATH="$FILE_PATH.tmp"
+              NEW_FILE_PATH="$FILE_PATH.new"
 
               echo $CONTENT > "$TMP_FILE_PATH"
               
@@ -115,9 +116,14 @@ jobs:
               cat "$FILE_PATH"
               echo "Merging files..."
               
-              yq eval-all 'select(fi == 0) * select(fi == 1)' "$FILE_PATH" "$TMP_FILE_PATH"
+              yq eval-all 'select(fi == 0) * select(fi == 1)' "$FILE_PATH" "$TMP_FILE_PATH" > "$NEW_FILE_PATH"
               
-              rm "$TMP_FILE_PATH"
+              echo "Merged content:"
+              cat "$NEW_FILE_PATH"
+
+              mv "$NEW_FILE_PATH" "$FILE_PATH"
+
+              rm "$TMP_FILE_PATH" "$NEW_FILE_PATH"
 
               exit 0
             fi
