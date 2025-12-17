@@ -109,13 +109,13 @@ jobs:
 
               echo $CONTENT > "$TMP_FILE_PATH"
               
-              echo "New content:\n"
+              echo "New content:"
               cat "$TMP_FILE_PATH"
-              echo "\nExisting content:\n"
+              echo "Existing content:"
               cat "$FILE_PATH"
-              echo "\nMerging files..."
+              echo "Merging files..."
               
-              yq eval-all 'select(fi == 0) * select(fi == 1)' "$FILE_PATH" "$TMP_FILE_PATH" > $FILE_PATH
+              yq eval-all 'select(fi == 0) * select(fi == 1)' "$FILE_PATH" "$TMP_FILE_PATH"
               
               rm "$TMP_FILE_PATH"
 
