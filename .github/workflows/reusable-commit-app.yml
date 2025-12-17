@@ -68,21 +68,12 @@ jobs:
 
       - name: Install require tools
         run: |
-          sudo apt-get update
+          YQ_VERSION="v4.50.1"
+          YQ_ARCH="linux_amd64"
 
-          if [[ "${{ inputs.app-file-extension }}" == "json" ]]; then
-            sudo apt-get install -y jq
-            exit 0
-          fi
+          curl -L "https://github.com/mikefarah/yq/releases/download/$YQ_VERSION/yq_$YQ_ARCH" -o /usr/local/bin/yq
 
-          if [[ "${{ inputs.app-file-extension }}" == "yml" || "${{ inputs.app-file-extension }}" == "yaml" ]]; then
-            sudo apt-get install -y python3-pip
-            pip3 install yq
-            exit 0
-          fi
-
-          echo "Unsupported file extension: ${{ inputs.app-file-extension }}"
-          exit 1
+          sudo chmod +x /usr/local/bin/yq
 
       - name: Prepare App File Content
         id: prepare-app
@@ -112,14 +103,22 @@ jobs:
           fi
 
           if [[ "$MERGE_STRATEGY" == "replace" ]]; then
-            echo "Replacing file content."
-            if [[ "${{ inputs.app-file-extension }}" == "json" ]]; then
-              jq -s '.[0] * .[1]' "$FILE_PATH" <(echo "$CONTENT") > "${FILE_PATH}.tmp" && mv "${FILE_PATH}.tmp" "$FILE_PATH"
-              exit 0
-            fi
-
             if [[ "${{ inputs.app-file-extension }}" == "yml" || "${{ inputs.app-file-extension }}" == "yaml" ]]; then
-              yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' "$FILE_PATH" <(echo "$CONTENT") > "${FILE_PATH}.tmp" && mv "${FILE_PATH}.tmp" "$FILE_PATH"
+              
+              TMP_FILE_PATH="$FILE_PATH.tmp"
+
+              echo $CONTENT > "$TMP_FILE_PATH"
+              
+              echo "New content:\n"
+              cat "$TMP_FILE_PATH"
+              echo "\nExisting content:\n"
+              cat "$FILE_PATH"
+              echo "\nMerging files..."
+              
+              yq eval-all 'select(fi == 0) * select(fi == 1)' "$FILE_PATH" "$TMP_FILE_PATH" > $FILE_PATH
+              
+              rm "$TMP_FILE_PATH"
+
               exit 0
             fi
 
