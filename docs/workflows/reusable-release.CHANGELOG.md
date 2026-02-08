@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-v1.1.1...reusable-release-v1.1.2) (2026-02-08)
+
+
+### Bug Fixes
+
+* **deploy:** correct syntax for app-path and aws_role_to_assume in reusable-deploy workflow ([05ef9a5](https://github.com/Invasor-de-Fronteiras/github-actions/commit/05ef9a563f8f92a8ec5d836165f853e572769243))
+
 ## [1.1.1](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-v1.1.0...reusable-release-v1.1.1) (2026-02-08)
 
 
