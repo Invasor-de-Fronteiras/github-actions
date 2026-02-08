@@ -1,3 +1,12 @@
+## [1.1.1](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-v1.1.0...reusable-release-v1.1.1) (2026-02-08)
+
+
+### Bug Fixes
+
+* **deploy:** add missing permissions for packages and id-token in build job ([38185ac](https://github.com/Invasor-de-Fronteiras/github-actions/commit/38185ac347bf89be1b9a8fed7b85f877ee7d3d28))
+* **deploy:** correct workflow reference for docker build job ([2f559f4](https://github.com/Invasor-de-Fronteiras/github-actions/commit/2f559f44389e5082cc661325816fd8d8774d6a87))
+* **deploy:** update reusable-commit-app workflow reference to main and add build dependency ([f5bf016](https://github.com/Invasor-de-Fronteiras/github-actions/commit/f5bf0166c1c98dfc0bfef93748ee7e569621e118))
+
 # [1.1.0](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-v1.0.0...reusable-release-v1.1.0) (2026-02-08)
 
 
