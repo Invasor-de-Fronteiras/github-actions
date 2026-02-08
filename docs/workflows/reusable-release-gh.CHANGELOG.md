@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-gh-v1.4.0...reusable-release-gh-v1.4.1) (2026-02-08)
+
+
+### Bug Fixes
+
+* **deploy:** add missing permissions for packages and id-token in build job ([38185ac](https://github.com/Invasor-de-Fronteiras/github-actions/commit/38185ac347bf89be1b9a8fed7b85f877ee7d3d28))
+
 # [1.4.0](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-gh-v1.3.0...reusable-release-gh-v1.4.0) (2026-02-08)
 
 
