@@ -35,14 +35,22 @@ on:
         required: false
         type: string
         default: 'main'
-    secrets:
-      GH_PAT:
-        description: 'Personal Access Token with repo permissions to commit the App'
-
+      aws_ssm_parameter_gh_pat:
+        description: 'The name of the SSM parameter that contains the GH_PAT to use for committing the App'
+        required: false
+        type: string
+      aws_ssm_parameter_gh_pat_region:
+        description: 'The region of the SSM parameter that contains the GH_PAT to use for committing the App'
+        required: false
+        type: string
+        default: 'us-east-1'
+      aws_role_to_assume:
+        description: 'The ARN of the AWS role to assume when retrieving the GH_PAT from SSM'
+        required: false
+        type: string
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-
 
 jobs:
   build:
@@ -51,6 +59,15 @@ jobs:
       contents: write
 
     steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ inputs.aws_role_to_assume }}
+          aws-region: ${{ inputs.aws_ssm_parameter_gh_pat_region }}
+      - name: Debug AWS Credentials
+        run: |
+          aws sts get-caller-identity 
+
       - name: Checkout current repository
         uses: actions/checkout@v6
         with:
