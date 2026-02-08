@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-v1.0.0...reusable-release-v1.1.0) (2026-02-08)
+
+
+### Features
+
+* **deploy:** add reusable workflows for deployment and build processes ([fc8b883](https://github.com/Invasor-de-Fronteiras/github-actions/commit/fc8b883c79c1b324cdb9a1a7b974106b91efef7c))
+
 # 1.0.0 (2026-02-08)
 
 
