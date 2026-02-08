@@ -1,3 +1,17 @@
+# [1.4.0](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-gh-v1.3.0...reusable-release-gh-v1.4.0) (2026-02-08)
+
+
+### Bug Fixes
+
+* **deploy:** correct workflow reference for docker build job ([2f559f4](https://github.com/Invasor-de-Fronteiras/github-actions/commit/2f559f44389e5082cc661325816fd8d8774d6a87))
+* **reusable-release-gh:** improve git history fetching logic and add debug output ([392751f](https://github.com/Invasor-de-Fronteiras/github-actions/commit/392751fc8eb14b8d23e91fc0181edada68674387))
+
+
+### Features
+
+* **commit-app:** deploy gitops applications pipe ([#4](https://github.com/Invasor-de-Fronteiras/github-actions/issues/4)) ([26c13a7](https://github.com/Invasor-de-Fronteiras/github-actions/commit/26c13a7cdbbc2e2ad02be25079970e841e8e9ac4))
+* **deploy:** add reusable workflows for deployment and build processes ([fc8b883](https://github.com/Invasor-de-Fronteiras/github-actions/commit/fc8b883c79c1b324cdb9a1a7b974106b91efef7c))
+
 # [1.3.0](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-gh-v1.2.0...reusable-release-gh-v1.3.0) (2025-12-16)
 
 
