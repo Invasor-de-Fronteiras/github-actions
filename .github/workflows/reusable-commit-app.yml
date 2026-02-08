@@ -65,7 +65,6 @@ jobs:
         with:
           role-to-assume: ${{ inputs.aws_role_to_assume }}
           aws-region: ${{ inputs.aws_ssm_parameter_gh_pat_region }}
-          role-session-name: MySessionName
       - name: Debug AWS Credentials
         run: |
           aws sts get-caller-identity 
