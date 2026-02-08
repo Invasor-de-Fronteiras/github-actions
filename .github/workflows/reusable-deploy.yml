@@ -7,6 +7,8 @@ jobs:
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-docker-build.yml@reusable-docker-build-v1
     permissions:
       contents: write
+      packages: write
+      id-token: write
     secrets: inherit
   release:
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-commit-app.yml@next
