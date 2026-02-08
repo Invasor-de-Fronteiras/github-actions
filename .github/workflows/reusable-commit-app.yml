@@ -68,6 +68,11 @@ jobs:
       - name: Debug AWS Credentials
         run: |
           aws sts get-caller-identity 
+      - name: Get GH_PAT from SSM
+        id: get-gh-pat
+        run: |
+          GH_PAT=$(aws ssm get-parameter --name "${{ inputs.aws_ssm_parameter_gh_pat }}" --query "Parameter.Value" --output text)
+          echo "GH_PAT=$GH_PAT" >> $GITHUB_ENV
 
       - name: Checkout current repository
         uses: actions/checkout@v6
@@ -77,7 +82,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: ${{ inputs.repository }}
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ env.GH_PAT }}
           path: target-repo
       
       - name: Create File Path
