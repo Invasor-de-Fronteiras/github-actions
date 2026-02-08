@@ -1,0 +1,23 @@
+name: Deploy Reusable Workflows
+on:
+  workflow_call:
+
+jobs:
+  build:
+    uses: Invasor-de-Fronteiras/github-actions/.github/workflows/docker-build.yml@reusable-docker-build-v1
+    permissions:
+      contents: write
+    secrets: inherit
+  release:
+    uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-commit-app.yml@next
+    permissions:
+      contents: write
+      id-token: write
+    with:
+      repository: Invasor-de-Fronteiras/kelbi-applications
+      app-content: |
+        version: ${{ github.sha }}
+      app-path: applications/{{ github.repository }}
+      aws_ssm_parameter_gh_pat: /arca/github-deploy-apps/token
+      aws_ssm_parameter_gh_pat_region: us-east-1
+      aws_role_to_assume: arn:aws:iam::545888714756:role/{{ github.repository_id }}-github-role
