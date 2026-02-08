@@ -20,7 +20,7 @@ jobs:
       repository: Invasor-de-Fronteiras/kelbi-applications
       app-content: |
         version: ${{ github.sha }}
-      app-path: applications/{{ github.repository }}
+      app-path: applications/${{ github.repository }}
       aws_ssm_parameter_gh_pat: /arca/github-deploy-apps/token
       aws_ssm_parameter_gh_pat_region: us-east-1
-      aws_role_to_assume: arn:aws:iam::545888714756:role/{{ github.repository_id }}-github-role
+      aws_role_to_assume: arn:aws:iam::545888714756:role/${{ github.repository_id }}-github-role
