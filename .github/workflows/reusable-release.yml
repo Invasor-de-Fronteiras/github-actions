@@ -58,6 +58,17 @@ jobs:
         with:
           node-version: "lts/*"
 
+      - name: Switch branch
+        if: ${{ inputs.create-branch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: release/${{ github.run_id }}
+          BRANCH_TO: main
+        run: |
+          set -e
+          echo "Creating $BRANCH_NAME branch from $BRANCH_TO"
+          git checkout -b $BRANCH_NAME
+
       - name: Create .releaserc
         if: ${{ inputs.create-release-config }}
         env:
