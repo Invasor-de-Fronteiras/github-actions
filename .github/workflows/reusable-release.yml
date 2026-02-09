@@ -16,6 +16,7 @@ on:
           @semantic-release/changelog
           @semantic-release/git
           @semantic-release/github
+          @semantic-release/exec
           conventional-changelog-conventionalcommits
       create-release-config:
         required: false
