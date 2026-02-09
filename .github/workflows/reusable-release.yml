@@ -3,8 +3,8 @@ on:
   workflow_call:
     outputs:
       version:
-        description: 'The version that was released'
-        value: ${{ steps.release.outputs.version }}
+          description: 'The version that was released'
+          value: ${{ jobs.release.outputs.version }}
     inputs:
       packages:
         required: false
