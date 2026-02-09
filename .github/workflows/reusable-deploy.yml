@@ -12,12 +12,12 @@ jobs:
             {name: 'master'},
             {name: 'main'}
           ],
-          "tagFormat": "${{ matrix.workflow }}-v${version}",
+          "tagFormat": "v${version}",
           "plugins": [
             ["@semantic-release/commit-analyzer", {"preset": "conventionalcommits"}],
             "@semantic-release/release-notes-generator",
             "@semantic-release/changelog",
-            "@semantic-release/git",
+            "@semantic-release/git"
           ],
         }
 
