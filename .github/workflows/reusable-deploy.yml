@@ -37,6 +37,7 @@ jobs:
 
   version:
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
+    needs: create_release_branch
     with:
       release-config-content: |
         {
