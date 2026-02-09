@@ -1,3 +1,15 @@
+# [1.0.0-main.2](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-deploy-v1.0.0-main.1...reusable-deploy-v1.0.0-main.2) (2026-02-09)
+
+
+### Bug Fixes
+
+* **reusable-deploy:** add dependency on create_release_branch for version job ([945fc57](https://github.com/Invasor-de-Fronteiras/github-actions/commit/945fc574cfb24f1d684de4f1e8d2d6fce41cfeeb))
+
+
+### Features
+
+* **reusable-deploy:** add job to create a release branch with checkout and push steps ([4a373db](https://github.com/Invasor-de-Fronteiras/github-actions/commit/4a373db9e7bd0bac27a8c1ee5ccc1288019e704b))
+
 # 1.0.0-main.1 (2026-02-09)
 
 
