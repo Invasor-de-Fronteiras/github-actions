@@ -1,3 +1,18 @@
+# [1.5.0](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-gh-v1.4.1...reusable-release-gh-v1.5.0) (2026-02-09)
+
+
+### Bug Fixes
+
+* **deploy:** correct syntax for app-path and aws_role_to_assume in reusable-deploy workflow ([05ef9a5](https://github.com/Invasor-de-Fronteiras/github-actions/commit/05ef9a563f8f92a8ec5d836165f853e572769243))
+* **deploy:** update reusable-commit-app workflow reference to main and add build dependency ([f5bf016](https://github.com/Invasor-de-Fronteiras/github-actions/commit/f5bf0166c1c98dfc0bfef93748ee7e569621e118))
+* **reusable-release-gh:** streamline workflow discovery process and improve logging ([2de0203](https://github.com/Invasor-de-Fronteiras/github-actions/commit/2de0203e852f56069e28610785b34e57aeea8b8c))
+* **reusable-release:** simplify branch creation logic and improve error handling ([43b9dfc](https://github.com/Invasor-de-Fronteiras/github-actions/commit/43b9dfcd9fb2fa04b97f63f960b4fd5cbdd6ab17))
+
+
+### Features
+
+* **reusable-release:** add create-branch option and implement branch creation logic ([4823e54](https://github.com/Invasor-de-Fronteiras/github-actions/commit/4823e541c95bfeebff4ba3f88d88d55c265dfa5e))
+
 ## [1.4.1](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-gh-v1.4.0...reusable-release-gh-v1.4.1) (2026-02-08)
 
 
