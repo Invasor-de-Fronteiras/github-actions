@@ -25,10 +25,6 @@ on:
         required: false
         type: string
         default: 'release/${{ github.ref_name }}'
-      branch-to:
-        required: false
-        type: string
-        default: 'release'
       release-config-content:
         required: false
         type: string
@@ -66,32 +62,18 @@ jobs:
         with:
           node-version: "lts/*"
 
-      - name: Create ${{ inputs.branch-to }} branch if it does not exist
-        if: ${{ inputs.create-branch }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH_TO: ${{ inputs.branch-to }}
-        run: |
-          set -e
-
-          echo "Creating $BRANCH_TO branch if it does not exist"
-          git checkout main
-          git switch $BRANCH_TO 2>/dev/null || git switch -c $BRANCH_TO
-          git push origin $BRANCH_TO
-
       - name: Create ${{ inputs.branch-name }} branch
         if: ${{ inputs.create-branch }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH_NAME: ${{ inputs.branch-name }}
-          BRANCH_TO: ${{ inputs.branch-to }}
         run: |
           set -e
 
-          echo "Creating $BRANCH_NAME branch from $BRANCH_TO"
-          git checkout $BRANCH_TO
-          git switch $BRANCH_TO 2>/dev/null || git switch -c $BRANCH_TO
-          git push origin $BRANCH_TO
+          echo "Creating $BRANCH_NAME branch from $BRANCH_NAME"
+          git checkout main
+          git switch $BRANCH_NAME 2>/dev/null || git switch -c $BRANCH_NAME
+          git push origin $BRANCH_NAME
 
       - name: Create .releaserc
         if: ${{ inputs.create-release-config }}
