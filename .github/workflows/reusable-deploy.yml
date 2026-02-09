@@ -10,9 +10,8 @@ jobs:
       release-config-content: |
         {
           "branches": [
-            {name: 'master', channel: "@next", prerelease: true},
-            {name: 'main', "channel": "@next", prerelease: true},
-            {name: 'release', channel: "@latest"}
+            {name: 'main'},
+            {name: 'next', "channel": "@next", prerelease: true}
           ],
           "tagFormat": "v${version}",
           "plugins": [
