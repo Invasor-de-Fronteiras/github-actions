@@ -10,37 +10,28 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v6
-
+      
       - id: set-matrix
         run: |
           set -e
-          echo "Fetching git history to discover changes to reusable workflows..."
+          echo "Listing all reusable workflows..."
 
-          git fetch --no-tags --prune --depth=2 origin
+          # Lista TODOS os arquivos reusable-*.yml
+          workflow_files=$(ls .github/workflows/reusable-*.yml 2>/dev/null || true)
 
-          if git rev-parse HEAD~1 >/dev/null 2>&1; then
-            diff_files=$(git diff --name-only HEAD~1 HEAD)
-          else
-            diff_files=$(git ls-tree -r --name-only HEAD)
-          fi
-
-          workflow_files=$(echo "$diff_files" | grep '^.github/workflows/reusable-.*\.yml$' || true)
-          normalized_files=$(echo "$workflow_files" | sed 's#.github/workflows/##' | sed 's/\.yml$//')
+          normalized_files=$(echo "$workflow_files" \
+            | sed 's#.github/workflows/##' \
+            | sed 's/\.yml$//')
 
           files=$(echo "$normalized_files" | tr '\n' ' ' | xargs || true)
 
-          echo "diff_files: $diff_files"
-          echo "workflow_files: $workflow_files"
-          echo "normalized_files: $normalized_files"
+          echo "found: $files"
 
           if [ -z "$files" ]; then
-            echo "No reusable workflows changed"
+            echo "No reusable workflows found"
             echo 'matrix={"workflow":[]}' >> "$GITHUB_OUTPUT"
             exit 0
           fi
-
-          echo "Discovered reusable workflows:"
-          echo "$files"
 
           json=$(printf '%s\n' $files | jq -R . | jq -cs '{ workflow: . }')
 
