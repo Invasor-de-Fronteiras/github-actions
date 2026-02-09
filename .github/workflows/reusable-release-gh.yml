@@ -44,6 +44,7 @@ jobs:
     name: Release ${{ matrix.workflow }}
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
     with:
+      create-branch: true
       release-config-content: |
         {
           "branches": [

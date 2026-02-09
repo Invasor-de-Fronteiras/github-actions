@@ -17,6 +17,18 @@ on:
         required: false
         type: boolean
         default: true
+      create-branch:
+        required: false
+        type: boolean
+        default: false
+      branch-name:
+        required: false
+        type: string
+        default: 'release/${{ github.ref_name }}'
+      branch-to:
+        required: false
+        type: string
+        default: 'release'
       release-config-content:
         required: false
         type: string
@@ -53,6 +65,42 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
+
+      - name: Create ${{ inputs.branch-to }} branch if it does not exist
+        if: ${{ inputs.create-branch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_TO: ${{ inputs.branch-to }}
+        run: |
+          set -e
+
+          echo "Creating $BRANCH_TO branch if it does not exist"
+          if git rev-parse --verify origin/$BRANCH_TO >/dev/null 2>&
+          then
+            echo "Branch $BRANCH_TO already exists"
+          else
+            echo "Branch $BRANCH_TO does not exist. Creating it from main."
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git checkout -b $BRANCH_TO origin/main
+            git push origin $BRANCH_TO
+          fi
+
+      - name: Create ${{ inputs.branch-name }} branch
+        if: ${{ inputs.create-branch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: ${{ inputs.branch-name }}
+          BRANCH_TO: ${{ inputs.branch-to }}
+        run: |
+          set -e
+
+          echo "Creating $BRANCH_NAME branch from $BRANCH_TO"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b $BRANCH_NAME origin/$BRANCH_TO
+          git push origin $BRANCH_NAME
+
       - name: Create .releaserc
         if: ${{ inputs.create-release-config }}
         env:
@@ -87,3 +135,4 @@ jobs:
           echo "Using packages: $EXTRA_PACKAGES"
 
           npx --package semantic-release $EXTRA_PACKAGES semantic-release
+
