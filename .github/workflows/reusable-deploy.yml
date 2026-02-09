@@ -10,15 +10,16 @@ jobs:
       release-config-content: |
         {
           "branches": [
-            {name: 'master'},
-            {name: 'main'}
+            {name: 'master', channel: "beta"},
+            {name: 'main', "channel": "beta"},
+            {name: 'release', channel: "@latest"}
           ],
           "tagFormat": "v${version}",
           "plugins": [
             ["@semantic-release/commit-analyzer", {"preset": "conventionalcommits"}],
             "@semantic-release/release-notes-generator",
             "@semantic-release/changelog",
-            "@semantic-release/git"
+            "@semantic-release/git",
             "@semantic-release/github",
           ],
         }
