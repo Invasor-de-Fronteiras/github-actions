@@ -1,3 +1,24 @@
+# [1.1.0-main.1](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-docker-build-v1.0.0...reusable-docker-build-v1.1.0-main.1) (2026-02-09)
+
+
+### Bug Fixes
+
+* **deploy:** add missing permissions for packages and id-token in build job ([38185ac](https://github.com/Invasor-de-Fronteiras/github-actions/commit/38185ac347bf89be1b9a8fed7b85f877ee7d3d28))
+* **deploy:** correct syntax for app-path and aws_role_to_assume in reusable-deploy workflow ([05ef9a5](https://github.com/Invasor-de-Fronteiras/github-actions/commit/05ef9a563f8f92a8ec5d836165f853e572769243))
+* **deploy:** correct workflow reference for docker build job ([2f559f4](https://github.com/Invasor-de-Fronteiras/github-actions/commit/2f559f44389e5082cc661325816fd8d8774d6a87))
+* **deploy:** update reusable-commit-app workflow reference to main and add build dependency ([f5bf016](https://github.com/Invasor-de-Fronteiras/github-actions/commit/f5bf0166c1c98dfc0bfef93748ee7e569621e118))
+* **reusable-release-gh:** improve git history fetching logic and add debug output ([392751f](https://github.com/Invasor-de-Fronteiras/github-actions/commit/392751fc8eb14b8d23e91fc0181edada68674387))
+* **reusable-release-gh:** streamline workflow discovery process and improve logging ([2de0203](https://github.com/Invasor-de-Fronteiras/github-actions/commit/2de0203e852f56069e28610785b34e57aeea8b8c))
+* **reusable-release:** simplify branch creation logic and improve error handling ([43b9dfc](https://github.com/Invasor-de-Fronteiras/github-actions/commit/43b9dfcd9fb2fa04b97f63f960b4fd5cbdd6ab17))
+
+
+### Features
+
+* **commit-app:** deploy gitops applications pipe ([#4](https://github.com/Invasor-de-Fronteiras/github-actions/issues/4)) ([26c13a7](https://github.com/Invasor-de-Fronteiras/github-actions/commit/26c13a7cdbbc2e2ad02be25079970e841e8e9ac4))
+* **deploy:** add reusable workflows for deployment and build processes ([fc8b883](https://github.com/Invasor-de-Fronteiras/github-actions/commit/fc8b883c79c1b324cdb9a1a7b974106b91efef7c))
+* **release-gh:** add workflow name in commit description ([299ce21](https://github.com/Invasor-de-Fronteiras/github-actions/commit/299ce21f8c0578174bf60cb1ddcbfa631c951847))
+* **reusable-release:** add create-branch option and implement branch creation logic ([4823e54](https://github.com/Invasor-de-Fronteiras/github-actions/commit/4823e541c95bfeebff4ba3f88d88d55c265dfa5e))
+
 # 1.0.0 (2025-12-16)
 
 
