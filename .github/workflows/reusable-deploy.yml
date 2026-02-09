@@ -5,6 +5,13 @@ on:
 jobs:
   version:
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for trusted publishing and npm provenance
+    secrets: inherit
+    out
     with:
       create-branch: true
       release-config-content: |
@@ -20,15 +27,10 @@ jobs:
             "@semantic-release/changelog",
             "@semantic-release/git",
             "@semantic-release/github",
+            ["@semantic-release/exec", {"prepareCmd": "echo ${nextRelease.version} >> "$VERSION"}]
           ],
         }
 
-    permissions:
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for trusted publishing and npm provenance
-    secrets: inherit
 
   build:
     needs: version
