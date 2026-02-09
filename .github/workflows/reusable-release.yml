@@ -75,16 +75,9 @@ jobs:
           set -e
 
           echo "Creating $BRANCH_TO branch if it does not exist"
-          if git rev-parse --verify origin/$BRANCH_TO >/dev/null 2>&
-          then
-            echo "Branch $BRANCH_TO already exists"
-          else
-            echo "Branch $BRANCH_TO does not exist. Creating it from main."
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git checkout -b $BRANCH_TO origin/main
-            git push origin $BRANCH_TO
-          fi
+          git checkout main
+          git switch $BRANCH_TO 2>/dev/null || git switch -c $BRANCH_TO
+          git push origin $BRANCH_TO
 
       - name: Create ${{ inputs.branch-name }} branch
         if: ${{ inputs.create-branch }}
@@ -96,10 +89,9 @@ jobs:
           set -e
 
           echo "Creating $BRANCH_NAME branch from $BRANCH_TO"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b $BRANCH_NAME origin/$BRANCH_TO
-          git push origin $BRANCH_NAME
+          git checkout $BRANCH_TO
+          git switch $BRANCH_TO 2>/dev/null || git switch -c $BRANCH_TO
+          git push origin $BRANCH_TO
 
       - name: Create .releaserc
         if: ${{ inputs.create-release-config }}
