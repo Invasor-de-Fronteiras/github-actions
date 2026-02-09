@@ -42,9 +42,8 @@ jobs:
       release-config-content: |
         {
           "branches": [
-            {name: 'release', "prerelease": false},
-            {name: 'master', "channel": "next", prerelease: true},
-            {name: 'main', "channel": "next", prerelease: true}
+            {name: 'master'},
+            {name: 'main'}
           ],
           "tagFormat": "${{ matrix.workflow }}-v${version}",
           "plugins": [
