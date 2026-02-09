@@ -1,3 +1,10 @@
+# [1.6.0-main.1](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-gh-v1.5.0...reusable-release-gh-v1.6.0-main.1) (2026-02-09)
+
+
+### Features
+
+* **reusable-deploy:** add job to create a release branch with checkout and push steps ([4a373db](https://github.com/Invasor-de-Fronteiras/github-actions/commit/4a373db9e7bd0bac27a8c1ee5ccc1288019e704b))
+
 # [1.5.0](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-release-gh-v1.4.1...reusable-release-gh-v1.5.0) (2026-02-09)
 
 
