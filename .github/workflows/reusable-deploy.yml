@@ -3,41 +3,8 @@ on:
   workflow_call:
 
 jobs:
-  create_release_branch:
-    name: Create release branch
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      id-token: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "lts/*"
-
-      - name: Create branch
-        if: ${{ inputs.create-branch }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH_NAME: ${{ inputs.branch-name }}
-          BRANCH_TO: ${{ inputs.branch-to }}
-        run: |
-          set -e
-
-          echo "Creating $BRANCH_NAME branch from $BRANCH_TO"
-          git checkout $BRANCH_TO
-          git switch $BRANCH_NAME 2>/dev/null || git switch -c $BRANCH_NAME
-          git push origin $BRANCH_NAME
-          git switch $BRANCH_TO
-
   version:
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
-    needs: create_release_branch
     with:
       release-config-content: |
         {
@@ -50,7 +17,6 @@ jobs:
             ["@semantic-release/commit-analyzer", {"preset": "conventionalcommits"}],
             "@semantic-release/release-notes-generator",
             "@semantic-release/changelog",
-            "@semantic-release/github",
             "@semantic-release/git",
           ],
         }
