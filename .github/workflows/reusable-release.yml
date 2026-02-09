@@ -112,7 +112,8 @@ jobs:
 
           npx --package semantic-release $EXTRA_PACKAGES semantic-release
 
-          echo version.txt
+          cat version.txt
           echo version=$(cat version.txt) >> "$GITHUB_OUTPUT"
+          echo "$GITHUB_OUTPUT"
           
 
