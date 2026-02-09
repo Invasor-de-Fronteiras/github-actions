@@ -3,7 +3,35 @@ on:
   workflow_call:
 
 jobs:
+  version:
+    uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
+    with:
+      release-config-content: |
+        {
+          "branches": [
+            "release",
+            {name: 'master', prerelease: true},
+            {name: 'main', prerelease: true}
+          ],
+          "tagFormat": "${{ matrix.workflow }}-v${version}",
+          "plugins": [
+            ["@semantic-release/commit-analyzer", {"preset": "conventionalcommits"}],
+            "@semantic-release/release-notes-generator",
+            "@semantic-release/changelog",
+            "@semantic-release/github",
+            "@semantic-release/git",
+          ],
+        }
+
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for trusted publishing and npm provenance
+    secrets: inherit
+
   build:
+    needs: version
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-docker-build.yml@reusable-docker-build-v1
     permissions:
       contents: write
