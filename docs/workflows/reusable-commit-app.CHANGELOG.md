@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/Invasor-de-Fronteiras/github-actions/compare/reusable-commit-app-v1.0.0...reusable-commit-app-v1.1.0) (2026-02-09)
+
+
+### Bug Fixes
+
+* **reusable-release:** simplify branch creation logic and improve error handling ([43b9dfc](https://github.com/Invasor-de-Fronteiras/github-actions/commit/43b9dfcd9fb2fa04b97f63f960b4fd5cbdd6ab17))
+
+
+### Features
+
+* **reusable-release:** add create-branch option and implement branch creation logic ([4823e54](https://github.com/Invasor-de-Fronteiras/github-actions/commit/4823e541c95bfeebff4ba3f88d88d55c265dfa5e))
+
 # 1.0.0 (2026-02-09)
 
 
