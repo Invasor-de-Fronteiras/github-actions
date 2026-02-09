@@ -48,11 +48,9 @@ jobs:
       release-config-content: |
         {
           "branches": [
-            "main",
-            "next",
-            "beta",
-            {name: 'beta', prerelease: true},
-            {name: 'alpha', prerelease: true}
+            "release",
+            {name: 'master', prerelease: true},
+            {name: 'main', prerelease: true}
           ],
           "tagFormat": "${{ matrix.workflow }}-v${version}",
           "plugins": [
