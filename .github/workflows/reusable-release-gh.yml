@@ -50,7 +50,9 @@ jobs:
           "branches": [
             "main",
             "next",
-            "beta"
+            "beta",
+            {name: 'beta', prerelease: true},
+            {name: 'alpha', prerelease: true}
           ],
           "tagFormat": "${{ matrix.workflow }}-v${version}",
           "plugins": [
