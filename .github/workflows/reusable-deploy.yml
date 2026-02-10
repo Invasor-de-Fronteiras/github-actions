@@ -24,7 +24,6 @@ jobs:
             ["@semantic-release/commit-analyzer", {"preset": "conventionalcommits"}],
             ["@semantic-release/exec", {"prepareCmd": "echo ${nextRelease.version} >> version.txt"}],
             "@semantic-release/release-notes-generator",
-            "@semantic-release/changelog",
             "@semantic-release/git",
             "@semantic-release/github",
           ],
@@ -35,6 +34,7 @@ jobs:
     needs: version
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-docker-build.yml@main
     secrets: inherit
+    if: startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: write
       packages: write
