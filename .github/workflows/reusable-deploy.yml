@@ -33,7 +33,7 @@ jobs:
 
   build:
     needs: version
-    uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-docker-build.yml@reusable-docker-build-v1
+    uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-docker-build.yml@main
     secrets: inherit
     permissions:
       contents: write
