@@ -146,7 +146,7 @@ jobs:
 
               mv "$NEW_FILE_PATH" "$FILE_PATH"
 
-              rm "$TMP_FILE_PATH" "$NEW_FILE_PATH"
+              rm "$TMP_FILE_PATH" "$NEW_FILE_PATH" -f
 
               exit 0
             fi
