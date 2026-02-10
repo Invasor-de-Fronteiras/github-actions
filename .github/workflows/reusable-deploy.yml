@@ -34,24 +34,23 @@ jobs:
     needs: version
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-docker-build.yml@main
     secrets: inherit
-    if: startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: write
       packages: write
       id-token: write
     with:
       metadata_tags: |
-        type=semver,pattern={{version}}
+        type=raw,value=${{ needs.version.outputs.version }}
   release:
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-commit-app.yml@main
-    needs: build
+    needs: [build, version]
     permissions:
       contents: write
       id-token: write
     with:
       repository: Invasor-de-Fronteiras/kelbi-applications
       app-content: |
-        version: ${{ github.sha }}
+        version: ${{ needs.version.outputs.version }}
       app-path: applications/${{ github.repository }}
       aws_ssm_parameter_gh_pat: /arca/github-deploy-apps/token
       aws_ssm_parameter_gh_pat_region: us-east-1
