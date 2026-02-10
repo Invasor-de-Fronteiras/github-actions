@@ -34,11 +34,14 @@ jobs:
   build:
     needs: version
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-docker-build.yml@reusable-docker-build-v1
+    secrets: inherit
     permissions:
       contents: write
       packages: write
       id-token: write
-    secrets: inherit
+    with:
+      metadata_tags: |
+        type=semver,pattern={{version}}
   release:
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-commit-app.yml@main
     needs: build
