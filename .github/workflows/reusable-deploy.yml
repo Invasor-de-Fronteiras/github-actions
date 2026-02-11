@@ -59,12 +59,3 @@ jobs:
       aws_ssm_parameter_gh_pat: /arca/github-deploy-apps/token
       aws_ssm_parameter_gh_pat_region: us-east-1
       aws_role_to_assume: arn:aws:iam::545888714756:role/${{ github.repository_id }}-github-role
-
-  open_pr:
-    runs-on: ubuntu-latest
-    needs: release
-    if: github.ref == 'refs/heads/next'
-    steps:
-      - name: Check if PR already exists
-        id: check_pr
-        
