@@ -107,12 +107,14 @@ jobs:
         id: prepare-app
         env:
           FILE_PATH: "target-repo/${{ inputs.app-path }}/${{ inputs.app-filename }}.${{ inputs.app-file-extension }}"
+          JSON_CONTENT: ${{ inputs.app-content }}
+          MERGE_STRATEGY: ${{ inputs.app-file-merge-strategy }}
+          CREATE_IF_MISSING: ${{ inputs.create-if-missing }}
         run: |
           set -e
-          CONTENT='${{ inputs.app-content }}'
-          MERGE_STRATEGY="${{ inputs.app-file-merge-strategy }}"
-          CREATE_IF_MISSING=${{ inputs.create-if-missing }}
           echo "FILE_PATH=$FILE_PATH"
+          
+          CONTENT=$(echo "$JSON_CONTENT" | yq -P)
 
           if [[ ! -f "$FILE_PATH" ]]; then
             if [ "$CREATE_IF_MISSING" = true ] ; then
