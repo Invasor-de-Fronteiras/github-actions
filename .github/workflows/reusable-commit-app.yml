@@ -32,7 +32,7 @@ on:
         default: 'application' # other options: any valid filename without extension
       create-if-missing:
         description: 'Whether to create the file if it is missing'
-        required: true
+        required: false
         type: boolean
         default: true
       branch:
