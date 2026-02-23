@@ -110,11 +110,14 @@ jobs:
           JSON_CONTENT: ${{ inputs.app-content }}
           MERGE_STRATEGY: ${{ inputs.app-file-merge-strategy }}
           CREATE_IF_MISSING: ${{ inputs.create-if-missing }}
+          FILE_EXTENSION: ${{ inputs.app-file-extension }}
         run: |
           set -e
           echo "FILE_PATH=$FILE_PATH"
           
-          CONTENT=$(echo "$JSON_CONTENT" | yq -P)
+          echo "$JSON_CONTENT" | yq -P > "$TMP_FILE_PATH"
+
+          CONTENT=$(cat "$TMP_FILE_PATH")
 
           if [[ ! -f "$FILE_PATH" ]]; then
             if [ "$CREATE_IF_MISSING" = true ] ; then
@@ -134,7 +137,7 @@ jobs:
           fi
 
           if [[ "$MERGE_STRATEGY" == "replace" ]]; then
-            if [[ "${{ inputs.app-file-extension }}" == "yml" || "${{ inputs.app-file-extension }}" == "yaml" ]]; then
+            if [[ "$FILE_EXTENSION" == "yml" || "$FILE_EXTENSION" == "yaml" ]]; then
               
               TMP_FILE_PATH="$FILE_PATH.tmp"
               NEW_FILE_PATH="$FILE_PATH.new"
@@ -162,7 +165,7 @@ jobs:
               exit 0
             fi
 
-            echo "Unsupported file extension for replace strategy: ${{ inputs.app-file-extension }}"
+            echo "Unsupported file extension for replace strategy: $FILE_EXTENSION"
             exit 1
           fi
 
