@@ -113,8 +113,10 @@ jobs:
           FILE_EXTENSION: ${{ inputs.app-file-extension }}
         run: |
           set -e
+          TMP_FILE_PATH="$FILE_PATH.tmp"
+          NEW_FILE_PATH="$FILE_PATH.new"
+
           echo "FILE_PATH=$FILE_PATH"
-          
           echo "$JSON_CONTENT" | yq -P > "$TMP_FILE_PATH"
 
           CONTENT=$(cat "$TMP_FILE_PATH")
