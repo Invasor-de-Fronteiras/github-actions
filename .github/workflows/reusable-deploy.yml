@@ -56,7 +56,7 @@ jobs:
     with:
       repository: Invasor-de-Fronteiras/kelbi-applications
       app-content: |
-        {"spec":{"source":{"valuesObject":{"image":"ghcr.io/${{ github.repository }}:${{ needs.version.outputs.version }}"}}}}
+        {"app":{"image":"ghcr.io/${{ github.repository }}:${{ needs.version.outputs.version }}"}}
       app-path: apps/${{ github.repository }}
       aws_ssm_parameter_gh_pat: /arca/github-deploy-apps/token
       aws_ssm_parameter_gh_pat_region: us-east-1
