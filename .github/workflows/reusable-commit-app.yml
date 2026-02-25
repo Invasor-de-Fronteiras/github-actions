@@ -143,6 +143,13 @@ jobs:
               cat "$TMP_FILE_PATH"
               echo "Existing content:"
               cat "$FILE_PATH"
+
+              if [[ ! -s "$FILE_PATH" ]]; then
+                echo "Existing file is empty. Writing content directly."
+                mv "$TMP_FILE_PATH" "$FILE_PATH"
+                exit 0
+              fi
+
               echo "Merging files..."
 
               yq eval-all 'select(fi == 0) * select(fi == 1)' "$FILE_PATH" "$TMP_FILE_PATH" > "$NEW_FILE_PATH"
