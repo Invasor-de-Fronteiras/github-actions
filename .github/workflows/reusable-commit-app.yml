@@ -19,7 +19,7 @@ on:
         description: 'The merge strategy to use when committing the App file'
         required: false
         type: string
-        default: 'replace' # other options: replace, overwrite
+        default: 'replace' # other options: overwrite
       app-file-extension:
         description: 'The file extension to use for the App file'
         required: false
@@ -70,6 +70,7 @@ jobs:
         with:
           role-to-assume: ${{ inputs.aws_role_to_assume }}
           aws-region: ${{ inputs.aws_ssm_parameter_gh_pat_region }}
+
       - name: Debug AWS Credentials
         run: |
           aws sts get-caller-identity 
@@ -77,30 +78,30 @@ jobs:
         id: get-gh-pat
         run: |
           GH_PAT=$(aws ssm get-parameter --name "${{ inputs.aws_ssm_parameter_gh_pat }}" --query "Parameter.Value" --output text)
-          echo "GH_PAT=$GH_PAT" >> $GITHUB_ENV
+          echo "::add-mask::$GH_PAT"
+          echo "gh_pat=$GH_PAT" >> $GITHUB_OUTPUT
 
       - name: Checkout current repository
         uses: actions/checkout@v6
         with:
           path: source-repo
+
       - name: Checkout target repository
         uses: actions/checkout@v6
         with:
           repository: ${{ inputs.repository }}
-          token: ${{ env.GH_PAT }}
+          token: ${{ steps.get-gh-pat.outputs.gh_pat }}
           path: target-repo
-      
+
       - name: Create File Path
         run: |
           mkdir -p "target-repo/${{ inputs.app-path }}"
 
-      - name: Install require tools
+      - name: Install required tools
         run: |
           YQ_VERSION="v4.50.1"
           YQ_ARCH="linux_amd64"
-
           curl -L "https://github.com/mikefarah/yq/releases/download/$YQ_VERSION/yq_$YQ_ARCH" -o /usr/local/bin/yq
-
           sudo chmod +x /usr/local/bin/yq
 
       - name: Prepare App File Content
@@ -119,12 +120,10 @@ jobs:
           echo "FILE_PATH=$FILE_PATH"
           echo "$JSON_CONTENT" | yq -P > "$TMP_FILE_PATH"
 
-          CONTENT=$(cat "$TMP_FILE_PATH")
-
           if [[ ! -f "$FILE_PATH" ]]; then
-            if [ "$CREATE_IF_MISSING" = true ] ; then
-              echo "File does not exist. Creating new file."
-              touch "$FILE_PATH"
+            if [ "$CREATE_IF_MISSING" = true ]; then
+              echo "File does not exist. Creating new file with provided content."
+              mv "$TMP_FILE_PATH" "$FILE_PATH"
               exit 0
             else
               echo "File does not exist and create-if-missing is false. Exiting."
@@ -139,22 +138,21 @@ jobs:
           fi
 
           if [[ "$MERGE_STRATEGY" == "replace" ]]; then
-            if [[ "$FILE_EXTENSION" == "yml" || "$FILE_EXTENSION" == "yaml" ]]; then              
-
+            if [[ "$FILE_EXTENSION" == "yml" || "$FILE_EXTENSION" == "yaml" ]]; then
               echo "New content:"
               cat "$TMP_FILE_PATH"
               echo "Existing content:"
               cat "$FILE_PATH"
               echo "Merging files..."
-              
+
               yq eval-all 'select(fi == 0) * select(fi == 1)' "$FILE_PATH" "$TMP_FILE_PATH" > "$NEW_FILE_PATH"
-              
+
               echo "Merged content:"
               cat "$NEW_FILE_PATH"
 
               mv "$NEW_FILE_PATH" "$FILE_PATH"
 
-              rm "$TMP_FILE_PATH" "$NEW_FILE_PATH" -f
+              rm -f "$TMP_FILE_PATH"
 
               exit 0
             fi
