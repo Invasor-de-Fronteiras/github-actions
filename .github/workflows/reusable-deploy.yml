@@ -58,6 +58,8 @@ jobs:
       app-content: |
         {"app":{"image":"ghcr.io/${{ github.repository }}:${{ needs.version.outputs.version }}"}}
       app-path: apps/${{ github.repository }}
+      app-filename: values
+      app-file-extension: yaml
       aws_ssm_parameter_gh_pat: /arca/github-deploy-apps/token
       aws_ssm_parameter_gh_pat_region: us-east-1
       aws_role_to_assume: arn:aws:iam::545888714756:role/${{ github.repository_id }}-github-role
