@@ -35,8 +35,17 @@ jobs:
           ]
         }
 
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      repository_lowercase: ${{ steps.repo_lowercase.outputs.value }}
+    steps:
+      - name: Set repository name to lowercase
+        id: repo_lowercase
+        run: echo "value=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
+
   build:
-    needs: version
+    needs: [version, prepare]
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-docker-build.yml@main
     secrets: inherit
     permissions:
@@ -49,7 +58,7 @@ jobs:
 
   release:
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-commit-app.yml@main
-    needs: [build, version]
+    needs: [build, version, prepare]
     if: github.ref == 'refs/heads/main' && inputs.release_step_enabled == true
     permissions:
       contents: write
@@ -57,7 +66,7 @@ jobs:
     with:
       repository: Invasor-de-Fronteiras/kelbi-applications
       app-content: |
-        {"app":{"image":"ghcr.io/${{ lower(github.repository) }}:${{ needs.version.outputs.version }}"}}
+        {"app":{"image":"ghcr.io/${{ needs.prepare.outputs.repository_lowercase }}:${{ needs.version.outputs.version }}"}}
       app-path: apps/${{ github.repository }}
       app-filename: values
       app-file-extension: yaml
