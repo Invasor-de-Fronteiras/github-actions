@@ -47,6 +47,11 @@ jobs:
       metadata_tags: |
         type=raw,value=${{ needs.version.outputs.version }}
   release:
+    uses: step-security/change-string-case-action@v6
+    id: repo_name
+    with:
+      input_string: ${{ github.repository }}
+      case: upper
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-commit-app.yml@main
     needs: [build, version]
     if: github.ref == 'refs/heads/main' && inputs.release_step_enabled == true
@@ -56,7 +61,7 @@ jobs:
     with:
       repository: Invasor-de-Fronteiras/kelbi-applications
       app-content: |
-        {"app":{"image":"ghcr.io/${{ github.repository }}:${{ needs.version.outputs.version }}"}}
+        {"app":{"image":"ghcr.io/${{ steps.repo_name.outputs.lowercase }}:${{ needs.version.outputs.version }}"}}
       app-path: apps/${{ github.repository }}
       app-filename: values
       app-file-extension: yaml
