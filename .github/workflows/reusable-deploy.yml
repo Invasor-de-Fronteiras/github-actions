@@ -1,4 +1,5 @@
 name: Deploy Reusable Workflows
+
 on:
   workflow_call:
     inputs:
@@ -11,18 +12,18 @@ jobs:
   version:
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
     permissions:
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
+      contents: write      # to be able to publish a GitHub release
+      issues: write        # to be able to comment on released issues
       pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for trusted publishing and npm provenance
+      id-token: write      # to enable use of OIDC for trusted publishing and npm provenance
     secrets: inherit
     with:
       create-branch: true
       release-config-content: |
         {
           "branches": [
-            {name: 'main'},
-            {name: 'next', "channel": "@next", prerelease: true}
+            {"name": "main"},
+            {"name": "next", "channel": "@next", "prerelease": true}
           ],
           "tagFormat": "v${version}",
           "plugins": [
@@ -30,10 +31,9 @@ jobs:
             ["@semantic-release/exec", {"prepareCmd": "echo ${nextRelease.version} >> version.txt"}],
             "@semantic-release/release-notes-generator",
             "@semantic-release/git",
-            "@semantic-release/github",
-          ],
+            "@semantic-release/github"
+          ]
         }
-
 
   build:
     needs: version
@@ -46,6 +46,7 @@ jobs:
     with:
       metadata_tags: |
         type=raw,value=${{ needs.version.outputs.version }}
+
   release:
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-commit-app.yml@main
     needs: [build, version]
@@ -56,7 +57,7 @@ jobs:
     with:
       repository: Invasor-de-Fronteiras/kelbi-applications
       app-content: |
-        {"app":{"image":"ghcr.io/${{ github.repository }}:${{ needs.version.outputs.version }}"}}
+        {"app":{"image":"ghcr.io/${{ lower(github.repository) }}:${{ needs.version.outputs.version }}"}}
       app-path: apps/${{ github.repository }}
       app-filename: values
       app-file-extension: yaml
