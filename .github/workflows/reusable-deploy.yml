@@ -3,10 +3,10 @@ name: Deploy Reusable Workflows
 on:
   workflow_call:
     inputs:
-      release_step_enabled:
+      deployments_names:
+        description: 'Comma-separated list of deployment workflow names to run. If empty, all reusable workflows will be run.'
         required: false
-        default: true
-        type: boolean
+        default: ''
 
 jobs:
   version:
@@ -63,11 +63,14 @@ jobs:
     permissions:
       contents: write
       id-token: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ inputs.deployments_names != '' && fromJson('["' + replace(inputs.deployments_names, ',', '","') + '"]') }}
     with:
       repository: Invasor-de-Fronteiras/kelbi-applications
       app-content: |
         {"app":{"image":"ghcr.io/${{ needs.prepare.outputs.repository_lowercase }}:${{ needs.version.outputs.version }}"}}
-      app-path: apps/${{ github.repository }}
+      app-path: apps/${{ github.repository }}${{ matrix }}
       app-filename: values
       app-file-extension: yaml
       aws_ssm_parameter_gh_pat: /arca/github-deploy-apps/token
