@@ -8,6 +8,10 @@ on:
         required: false
         default: ''
         type: string
+      release_step_enabled:
+        required: false
+        default: true
+        type: boolean
 
 jobs:
   version:
