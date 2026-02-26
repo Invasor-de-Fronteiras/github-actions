@@ -52,8 +52,10 @@ jobs:
           DEPLOY_NAMES: ${{ inputs.deployments_names }}
         run: |
           if [[ -z "$DEPLOY_NAMES" ]]; then
+            echo "No deployment names provided, running all reusable workflows."
             echo 'matrix={"suffix":[""]}' >> $GITHUB_OUTPUT
           else
+            echo "Deployment names provided: $DEPLOY_NAMES"
             SUFFIXES=$(echo "$DEPLOY_NAMES" | tr ',' '\n' | sed 's/^/-/' | jq -Rsc '[splits("\n") | select(. != "")]')
             echo "matrix={\"suffix\":$SUFFIXES}" >> $GITHUB_OUTPUT
           fi
