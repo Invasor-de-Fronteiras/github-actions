@@ -38,11 +38,24 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      repository_lowercase: ${{ steps.repo_lowercase.outputs.value }}
+      repository_lowercase: ${{ steps.repo_lowercase.outputs.repository_lowercase }}
+      matrix: ${{ steps.set_matrix.outputs.matrix }}
     steps:
       - name: Set repository name to lowercase
         id: repo_lowercase
-        run: echo "value=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
+        run: echo "repository_lowercase=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
+
+      - name: Build deployment matrix
+        id: set_matrix
+        env:
+          DEPLOY_NAMES: ${{ inputs.deployments_names }}
+        run: |
+          if [[ -z "$DEPLOY_NAMES" ]]; then
+            echo 'matrix={"suffix":[""]}' >> $GITHUB_OUTPUT
+          else
+            SUFFIXES=$(echo "$DEPLOY_NAMES" | tr ',' '\n' | sed 's/^/-/' | jq -Rsc '[splits("\n") | select(. != "")]')
+            echo "matrix={\"suffix\":$SUFFIXES}" >> $GITHUB_OUTPUT
+          fi
 
   build:
     needs: [version, prepare]
@@ -65,12 +78,12 @@ jobs:
       id-token: write
     strategy:
       fail-fast: false
-      matrix: ${{ inputs.deployments_names != '' && fromJson('["' + replace(inputs.deployments_names, ',', '","') + '"]') }}
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
     with:
       repository: Invasor-de-Fronteiras/kelbi-applications
       app-content: |
         {"app":{"image":"ghcr.io/${{ needs.prepare.outputs.repository_lowercase }}:${{ needs.version.outputs.version }}"}}
-      app-path: apps/${{ github.repository }}${{ matrix }}
+      app-path: apps/${{ github.repository }}${{ matrix.suffix }}
       app-filename: values
       app-file-extension: yaml
       aws_ssm_parameter_gh_pat: /arca/github-deploy-apps/token
