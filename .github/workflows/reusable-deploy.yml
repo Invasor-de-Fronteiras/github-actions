@@ -89,7 +89,7 @@ jobs:
     with:
       repository: Invasor-de-Fronteiras/kelbi-applications
       app-content: |
-        {"app":{"image":"ghcr.io/${{ needs.prepare.outputs.repository_lowercase }}:${{ needs.version.outputs.version }}"}}
+        {"image":"ghcr.io/${{ needs.prepare.outputs.repository_lowercase }}:${{ needs.version.outputs.version }}"}
       app-path: apps/${{ github.repository }}${{ matrix.suffix }}
       app-filename: values
       app-file-extension: yaml
