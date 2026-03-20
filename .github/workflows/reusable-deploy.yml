@@ -3,6 +3,11 @@ name: Deploy Reusable Workflows
 on:
   workflow_call:
     inputs:
+      deployments_names:
+        description: 'Comma-separated list of deployment workflow names to run. If empty, all reusable workflows will be run.'
+        required: false
+        default: ''
+        type: string
       release_step_enabled:
         required: false
         default: true
@@ -38,11 +43,26 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      repository_lowercase: ${{ steps.repo_lowercase.outputs.value }}
+      repository_lowercase: ${{ steps.repo_lowercase.outputs.repository_lowercase }}
+      matrix: ${{ steps.set_matrix.outputs.matrix }}
     steps:
       - name: Set repository name to lowercase
         id: repo_lowercase
-        run: echo "value=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
+        run: echo "repository_lowercase=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
+
+      - name: Build deployment matrix
+        id: set_matrix
+        env:
+          DEPLOY_NAMES: ${{ inputs.deployments_names }}
+        run: |
+          if [[ -z "$DEPLOY_NAMES" ]]; then
+            echo "No deployment names provided, running all reusable workflows."
+            echo 'matrix={"suffix":[""]}' >> $GITHUB_OUTPUT
+          else
+            echo "Deployment names provided: $DEPLOY_NAMES"
+            SUFFIXES=$(echo "$DEPLOY_NAMES" | tr ',' '\n' | sed 's/^/-/' | jq -Rsc '[splits("\n") | select(. != "")]')
+            echo "matrix={\"suffix\":$SUFFIXES}" >> $GITHUB_OUTPUT
+          fi
 
   build:
     needs: [version, prepare]
@@ -63,11 +83,14 @@ jobs:
     permissions:
       contents: write
       id-token: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
     with:
       repository: Invasor-de-Fronteiras/kelbi-applications
       app-content: |
-        {"app":{"image":"ghcr.io/${{ needs.prepare.outputs.repository_lowercase }}:${{ needs.version.outputs.version }}"}}
-      app-path: apps/${{ github.repository }}
+        {"image":"ghcr.io/${{ needs.prepare.outputs.repository_lowercase }}:${{ needs.version.outputs.version }}"}
+      app-path: apps/${{ github.repository }}${{ matrix.suffix }}
       app-filename: values
       app-file-extension: yaml
       aws_ssm_parameter_gh_pat: /arca/github-deploy-apps/token
