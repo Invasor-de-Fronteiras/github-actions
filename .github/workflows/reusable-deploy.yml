@@ -14,17 +14,18 @@ on:
         type: boolean
 
 jobs:
-  bump_version:
-    name: Bump Version and Create GitHub Release
+  get_next_version:
+    name: Get Next Version
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
     permissions:
-      contents: write      # to be able to publish a GitHub release
-      issues: write        # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
-      id-token: write      # to enable use of OIDC for trusted publishing and npm provenance
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
     secrets: inherit
     with:
-      create-branch: true
+      dry_run: true
+      create-branch: false
       release-config-content: |
         {
           "branches": [
@@ -34,10 +35,7 @@ jobs:
           "tagFormat": "v${version}",
           "plugins": [
             ["@semantic-release/commit-analyzer", {"preset": "conventionalcommits"}],
-            ["@semantic-release/exec", {"prepareCmd": "echo ${nextRelease.version} >> version.txt"}],
-            "@semantic-release/release-notes-generator",
-            "@semantic-release/git",
-            "@semantic-release/github"
+            ["@semantic-release/exec", {"prepareCmd": "echo ${nextRelease.version} >> version.txt"}]
           ]
         }
 
@@ -68,7 +66,8 @@ jobs:
 
   docker_build:
     name: Build and Push Docker Image
-    needs: [bump_version, prepare_matrix]
+    needs: [get_next_version, prepare_matrix]
+    if: needs.get_next_version.outputs.released == 'true'
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-docker-build.yml@main
     secrets: inherit
     permissions:
@@ -76,15 +75,42 @@ jobs:
       packages: write
       id-token: write
     with:
-      skip_push: ${{ needs.bump_version.outputs.released != 'true' }}
       metadata_tags: |
-        type=raw,value=${{ needs.bump_version.outputs.version }}
+        type=raw,value=${{ needs.get_next_version.outputs.version }}
+
+  bump_version:
+    name: Bump Version and Create GitHub Release
+    needs: [docker_build]
+    uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    secrets: inherit
+    with:
+      create-branch: true
+      release-config-content: |
+        {
+          "branches": [
+            {"name": "main"},
+            {"name": "next", "channel": "@next", "prerelease": true}
+          ],
+          "tagFormat": "v${version}",
+          "plugins": [
+            ["@semantic-release/commit-analyzer", {"preset": "conventionalcommits"}],
+            ["@semantic-release/exec", {"prepareCmd": "echo ${nextRelease.version} >> version.txt"}],
+            "@semantic-release/release-notes-generator",
+            "@semantic-release/git",
+            "@semantic-release/github"
+          ]
+        }
 
   update_manifests:
     name: Deploy Version to Environments
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-commit-app.yml@main
-    needs: [docker_build, bump_version, prepare_matrix]
-    if: github.ref == 'refs/heads/main' && inputs.release_step_enabled == true && needs.bump_version.outputs.released == 'true'
+    needs: [bump_version, prepare_matrix]
+    if: github.ref == 'refs/heads/main' && inputs.release_step_enabled == true
     permissions:
       contents: write
       id-token: write

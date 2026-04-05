@@ -29,6 +29,10 @@ on:
         required: false
         type: boolean
         default: false
+      dry_run:
+        required: false
+        type: boolean
+        default: false
       release-config-content:
         required: false
         type: string
@@ -114,7 +118,12 @@ jobs:
 
           echo "Using packages: $EXTRA_PACKAGES"
 
-          npx --package semantic-release $EXTRA_PACKAGES semantic-release
+          DRY_RUN_FLAG=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            DRY_RUN_FLAG="--dry-run"
+          fi
+
+          npx --package semantic-release $EXTRA_PACKAGES semantic-release $DRY_RUN_FLAG
 
           if [ -f version.txt ]; then
             VERSION=$(cat version.txt)
