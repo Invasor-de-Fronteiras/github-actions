@@ -14,7 +14,7 @@ on:
         type: boolean
 
 jobs:
-  version:
+  bump_version:
     name: Bump Version and Create GitHub Release
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
     permissions:
@@ -41,7 +41,7 @@ jobs:
           ]
         }
 
-  prepare:
+  prepare_matrix:
     name: Prepare Deploy Matrix
     runs-on: ubuntu-latest
     outputs:
@@ -66,9 +66,9 @@ jobs:
             echo "matrix={\"suffix\":$SUFFIXES}" >> $GITHUB_OUTPUT
           fi
 
-  build:
+  docker_build:
     name: Build and Push Docker Image
-    needs: [version, prepare]
+    needs: [bump_version, prepare_matrix]
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-docker-build.yml@main
     secrets: inherit
     permissions:
@@ -76,25 +76,25 @@ jobs:
       packages: write
       id-token: write
     with:
-      skip_push: ${{ needs.version.outputs.released != 'true' }}
+      skip_push: ${{ needs.bump_version.outputs.released != 'true' }}
       metadata_tags: |
-        type=raw,value=${{ needs.version.outputs.version }}
+        type=raw,value=${{ needs.bump_version.outputs.version }}
 
-  release:
+  update_manifests:
     name: Deploy Version to Environments
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-commit-app.yml@main
-    needs: [build, version, prepare]
-    if: github.ref == 'refs/heads/main' && inputs.release_step_enabled == true && needs.version.outputs.released == 'true'
+    needs: [docker_build, bump_version, prepare_matrix]
+    if: github.ref == 'refs/heads/main' && inputs.release_step_enabled == true && needs.bump_version.outputs.released == 'true'
     permissions:
       contents: write
       id-token: write
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.prepare_matrix.outputs.matrix) }}
     with:
       repository: Invasor-de-Fronteiras/kelbi-applications
       app-content: |
-        {"image":"ghcr.io/${{ needs.prepare.outputs.repository_lowercase }}:${{ needs.version.outputs.version }}"}
+        {"image":"ghcr.io/${{ needs.prepare_matrix.outputs.repository_lowercase }}:${{ needs.bump_version.outputs.version }}"}
       app-path: apps/${{ github.repository }}${{ matrix.suffix }}
       app-filename: values
       app-file-extension: yaml

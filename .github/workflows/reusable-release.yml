@@ -4,10 +4,10 @@ on:
     outputs:
       version:
           description: 'The version that was released'
-          value: ${{ jobs.release.outputs.version }}
+          value: ${{ jobs.bump_version.outputs.version }}
       released:
           description: 'Whether a new version was released'
-          value: ${{ jobs.release.outputs.released }}
+          value: ${{ jobs.bump_version.outputs.released }}
     inputs:
       packages:
         required: false
@@ -48,7 +48,7 @@ on:
           }
 
 jobs:
-  release:
+  bump_version:
     name: Semantic Release
     runs-on: ubuntu-latest
     permissions:
