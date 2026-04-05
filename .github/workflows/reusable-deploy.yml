@@ -13,6 +13,10 @@ on:
         default: true
         type: boolean
 
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   get_next_version:
     name: Get Next Version
@@ -24,7 +28,7 @@ jobs:
       id-token: write
     secrets: inherit
     with:
-      dry_run: true
+      dry_run: false
       create-branch: false
       release-config-content: |
         {
