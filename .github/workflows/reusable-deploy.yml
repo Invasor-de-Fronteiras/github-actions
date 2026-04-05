@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   get_next_version:
-    name: Get Next Version
+    name: Create Draft Release
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
     permissions:
       contents: write
@@ -28,7 +28,6 @@ jobs:
       id-token: write
     secrets: inherit
     with:
-      dry_run: false
       create-branch: false
       release-config-content: |
         {
@@ -39,7 +38,9 @@ jobs:
           "tagFormat": "v${version}",
           "plugins": [
             ["@semantic-release/commit-analyzer", {"preset": "conventionalcommits"}],
-            ["@semantic-release/exec", {"prepareCmd": "echo ${nextRelease.version} >> version.txt"}]
+            "@semantic-release/release-notes-generator",
+            ["@semantic-release/exec", {"prepareCmd": "echo ${nextRelease.version} >> version.txt"}],
+            ["@semantic-release/github", {"draft": true}]
           ]
         }
 
@@ -82,38 +83,23 @@ jobs:
       metadata_tags: |
         type=raw,value=${{ needs.get_next_version.outputs.version }}
 
-  bump_version:
-    name: Bump Version and Create GitHub Release
-    needs: [docker_build]
-    uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
+  publish_release:
+    name: Publish GitHub Release
+    needs: [docker_build, get_next_version]
+    runs-on: ubuntu-latest
     permissions:
       contents: write
-      issues: write
-      pull-requests: write
-      id-token: write
-    secrets: inherit
-    with:
-      create-branch: true
-      release-config-content: |
-        {
-          "branches": [
-            {"name": "main"},
-            {"name": "next", "channel": "@next", "prerelease": true}
-          ],
-          "tagFormat": "v${version}",
-          "plugins": [
-            ["@semantic-release/commit-analyzer", {"preset": "conventionalcommits"}],
-            ["@semantic-release/exec", {"prepareCmd": "echo ${nextRelease.version} >> version.txt"}],
-            "@semantic-release/release-notes-generator",
-            "@semantic-release/git",
-            "@semantic-release/github"
-          ]
-        }
+    steps:
+      - name: Publish draft release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.get_next_version.outputs.version }}
+        run: gh release edit "v$VERSION" --draft=false --repo $GITHUB_REPOSITORY
 
   update_manifests:
     name: Deploy Version to Environments
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-commit-app.yml@main
-    needs: [bump_version, prepare_matrix]
+    needs: [publish_release, prepare_matrix, get_next_version]
     if: github.ref == 'refs/heads/main' && inputs.release_step_enabled == true
     permissions:
       contents: write
@@ -124,7 +110,7 @@ jobs:
     with:
       repository: Invasor-de-Fronteiras/kelbi-applications
       app-content: |
-        {"image":"ghcr.io/${{ needs.prepare_matrix.outputs.repository_lowercase }}:${{ needs.bump_version.outputs.version }}"}
+        {"image":"ghcr.io/${{ needs.prepare_matrix.outputs.repository_lowercase }}:${{ needs.get_next_version.outputs.version }}"}
       app-path: apps/${{ github.repository }}${{ matrix.suffix }}
       app-filename: values
       app-file-extension: yaml

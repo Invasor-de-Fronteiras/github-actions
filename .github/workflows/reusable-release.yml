@@ -29,10 +29,6 @@ on:
         required: false
         type: boolean
         default: false
-      dry_run:
-        required: false
-        type: boolean
-        default: false
       release-config-content:
         required: false
         type: string
@@ -107,6 +103,7 @@ jobs:
 
           echo "Created .releaserc with content:\n"
           cat .releaserc
+
       - name: Run semantic-release
         id: release
         env:
@@ -114,7 +111,7 @@ jobs:
           PACKAGES: ${{ inputs.packages }}
         run: |
           set -e
-          
+
           NORMALIZED_PKGS=$(echo $PACKAGES | tr '\n' ',' | sed 's/,$//')
           echo "Normalized packages: $NORMALIZED_PKGS"
 
@@ -126,12 +123,7 @@ jobs:
 
           echo "Using packages: $EXTRA_PACKAGES"
 
-          DRY_RUN_FLAG=""
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
-            DRY_RUN_FLAG="--dry-run"
-          fi
-
-          npx --package semantic-release $EXTRA_PACKAGES semantic-release $DRY_RUN_FLAG
+          npx --package semantic-release $EXTRA_PACKAGES semantic-release
 
           if [ -f version.txt ]; then
             VERSION=$(cat version.txt)
@@ -143,5 +135,3 @@ jobs:
             echo released=false >> "$GITHUB_OUTPUT"
           fi
           echo "$GITHUB_OUTPUT"
-          
-
