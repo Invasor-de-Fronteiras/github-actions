@@ -5,6 +5,9 @@ on:
       version:
           description: 'The version that was released'
           value: ${{ jobs.release.outputs.version }}
+      released:
+          description: 'Whether a new version was released'
+          value: ${{ jobs.release.outputs.released }}
     inputs:
       packages:
         required: false
@@ -46,7 +49,7 @@ on:
 
 jobs:
   release:
-    name: Release
+    name: Semantic Release
     runs-on: ubuntu-latest
     permissions:
       contents: write # to be able to publish a GitHub release
@@ -55,8 +58,9 @@ jobs:
       id-token: write # to enable use of OIDC for trusted publishing and npm provenance
     outputs:
       version: ${{ steps.release.outputs.version }}
+      released: ${{ steps.release.outputs.released }}
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
@@ -65,7 +69,7 @@ jobs:
         with:
           node-version: "lts/*"
 
-      - name: Switch branch
+      - name: Create release branch
         if: ${{ inputs.create-branch }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -76,7 +80,7 @@ jobs:
           echo "Creating $BRANCH_NAME branch from $BRANCH_TO"
           git checkout -b $BRANCH_NAME
 
-      - name: Create .releaserc
+      - name: Generate .releaserc config
         if: ${{ inputs.create-release-config }}
         env:
           RELEASE_CONFIG_CONTENT: ${{ inputs.release-config-content }}
@@ -91,7 +95,7 @@ jobs:
 
           echo "Created .releaserc with content:\n"
           cat .releaserc
-      - name: Release
+      - name: Run semantic-release
         id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -112,8 +116,15 @@ jobs:
 
           npx --package semantic-release $EXTRA_PACKAGES semantic-release
 
-          cat version.txt
-          echo version=$(cat version.txt) >> "$GITHUB_OUTPUT"
+          if [ -f version.txt ]; then
+            VERSION=$(cat version.txt)
+            echo "New version released: $VERSION"
+            echo version=$VERSION >> "$GITHUB_OUTPUT"
+            echo released=true >> "$GITHUB_OUTPUT"
+          else
+            echo "No new version released, skipping."
+            echo released=false >> "$GITHUB_OUTPUT"
+          fi
           echo "$GITHUB_OUTPUT"
           
 

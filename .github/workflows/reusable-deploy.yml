@@ -15,6 +15,7 @@ on:
 
 jobs:
   version:
+    name: Bump Version and Create GitHub Release
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-release.yml@main
     permissions:
       contents: write      # to be able to publish a GitHub release
@@ -41,6 +42,7 @@ jobs:
         }
 
   prepare:
+    name: Prepare Deploy Matrix
     runs-on: ubuntu-latest
     outputs:
       repository_lowercase: ${{ steps.repo_lowercase.outputs.repository_lowercase }}
@@ -65,6 +67,7 @@ jobs:
           fi
 
   build:
+    name: Build and Push Docker Image
     needs: [version, prepare]
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-docker-build.yml@main
     secrets: inherit
@@ -73,13 +76,15 @@ jobs:
       packages: write
       id-token: write
     with:
+      skip_push: ${{ needs.version.outputs.released != 'true' }}
       metadata_tags: |
         type=raw,value=${{ needs.version.outputs.version }}
 
   release:
+    name: Deploy Version to Environments
     uses: Invasor-de-Fronteiras/github-actions/.github/workflows/reusable-commit-app.yml@main
     needs: [build, version, prepare]
-    if: github.ref == 'refs/heads/main' && inputs.release_step_enabled == true
+    if: github.ref == 'refs/heads/main' && inputs.release_step_enabled == true && needs.version.outputs.released == 'true'
     permissions:
       contents: write
       id-token: write
