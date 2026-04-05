@@ -73,6 +73,14 @@ jobs:
         with:
           node-version: "lts/*"
 
+      - name: Cache npm packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-semantic-release
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
       - name: Create release branch
         if: ${{ inputs.create-branch }}
         env:
